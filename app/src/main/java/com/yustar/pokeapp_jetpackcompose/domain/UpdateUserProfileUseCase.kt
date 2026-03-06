@@ -2,21 +2,19 @@ package com.yustar.pokeapp_jetpackcompose.domain
 
 import com.yustar.pokeapp_jetpackcompose.data.repository.UserRepository
 
-class RegisterUserUseCase(
+class UpdateUserProfileUseCase(
     private val repository: UserRepository
 ) {
 
     suspend operator fun invoke(
         username: String,
-        password: String,
-        firstName: String = "",
-        lastName: String = "",
-        address: String = "",
-        phoneNumber: String = ""
+        firstName: String? = null,
+        lastName: String? = null,
+        address: String? = null,
+        phoneNumber: String? = null
     ) {
-        repository.register(
+        repository.updateUserProfile(
             username = username,
-            password = password,
             firstName = firstName,
             lastName = lastName,
             address = address,

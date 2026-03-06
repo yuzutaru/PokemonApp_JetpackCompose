@@ -37,13 +37,24 @@ class UserDaoTest {
 
     @Test
     fun insertAndGetUser_returnsCorrectData() = runBlocking {
-        val user = User(username = "ash_ketchum", password = "password123")
+        val user = User(
+            username = "ash_ketchum",
+            password = "password123",
+            firstName = "Ash",
+            lastName = "Ketchum",
+            address = "Pallet Town",
+            phoneNumber = "1234567890"
+        )
         userDao.insertUser(user)
 
         val retrievedUser = userDao.getUserByUsername("ash_ketchum")
 
         Assert.assertEquals("Username should match", user.username, retrievedUser?.username)
         Assert.assertEquals("Password should match", user.password, retrievedUser?.password)
+        Assert.assertEquals("FirstName should match", user.firstName, retrievedUser?.firstName)
+        Assert.assertEquals("LastName should match", user.lastName, retrievedUser?.lastName)
+        Assert.assertEquals("Address should match", user.address, retrievedUser?.address)
+        Assert.assertEquals("PhoneNumber should match", user.phoneNumber, retrievedUser?.phoneNumber)
     }
 
     @Test
@@ -54,13 +65,73 @@ class UserDaoTest {
 
     @Test(expected = SQLiteConstraintException::class)
     fun insertDuplicateUsername_throwsException() = runBlocking {
-        val user1 = User(username = "ash_ketchum", password = "password123")
-        val user2 = User(username = "ash_ketchum", password = "different_password")
+        val user1 = User(
+            username = "ash_ketchum",
+            password = "password123",
+            firstName = "Ash",
+            lastName = "Ketchum",
+            address = "Pallet Town",
+            phoneNumber = "1234567890"
+        )
+        val user2 = User(
+            username = "ash_ketchum",
+            password = "different_password",
+            firstName = "Ash",
+            lastName = "Ketchum",
+            address = "Pallet Town",
+            phoneNumber = "1234567890"
+        )
 
         userDao.insertUser(user1)
 
         // This should throw SQLiteConstraintException because 'username' is the PrimaryKey
         // and the default Room @Insert conflict strategy is ABORT (unless specified otherwise)
         userDao.insertUser(user2)
+    }
+
+    @Test
+    fun updateUser_updatesCorrectData() = runBlocking {
+        val user = User(
+            username = "ash_ketchum",
+            password = "password123",
+            firstName = "Ash",
+            lastName = "Ketchum",
+            address = "Pallet Town",
+            phoneNumber = "1234567890"
+        )
+        userDao.insertUser(user)
+
+        val updatedUser = user.copy(password = "newpassword123", address = "Cerulean City")
+        userDao.updateUser(updatedUser)
+
+        val retrievedUser = userDao.getUserByUsername("ash_ketchum")
+        Assert.assertEquals("Password should be updated", "newpassword123", retrievedUser?.password)
+        Assert.assertEquals("Address should be updated", "Cerulean City", retrievedUser?.address)
+    }
+
+    @Test
+    fun updateUserProfile_updatesOnlyProvidedFields() = runBlocking {
+        val user = User(
+            username = "ash_ketchum",
+            password = "password123",
+            firstName = "Ash",
+            lastName = "Ketchum",
+            address = "Pallet Town",
+            phoneNumber = "1234567890"
+        )
+        userDao.insertUser(user)
+
+        userDao.updateUserProfile(
+            username = "ash_ketchum",
+            firstName = "Red",
+            address = "Kanto"
+        )
+
+        val retrievedUser = userDao.getUserByUsername("ash_ketchum")
+        Assert.assertEquals("FirstName should be updated", "Red", retrievedUser?.firstName)
+        Assert.assertEquals("Address should be updated", "Kanto", retrievedUser?.address)
+        Assert.assertEquals("LastName should remain unchanged", "Ketchum", retrievedUser?.lastName)
+        Assert.assertEquals("PhoneNumber should remain unchanged", "1234567890", retrievedUser?.phoneNumber)
+        Assert.assertEquals("Password should remain unchanged", "password123", retrievedUser?.password)
     }
 }
