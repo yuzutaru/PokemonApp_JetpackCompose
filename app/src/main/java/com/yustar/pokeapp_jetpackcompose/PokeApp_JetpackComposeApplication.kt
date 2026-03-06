@@ -1,7 +1,7 @@
 package com.yustar.pokeapp_jetpackcompose
 
 import android.app.Application
-import com.yustar.pokeapp_jetpackcompose.di.appModule
+import com.yustar.auth.di.authModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -16,7 +16,7 @@ class PokeApp_JetpackComposeApplication: Application() {
         startKoin {
             androidLogger()
             androidContext(this@PokeApp_JetpackComposeApplication)
-            modules(appModule)
+            modules(authModule)
         }
     }
 }

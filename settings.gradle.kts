@@ -25,4 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "PokeApp_JetpackCompose"
 include(":app")
 include(":core")
-include(":Auth")
+include(":auth")

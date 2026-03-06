@@ -41,6 +41,7 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 
 #koin
 io-insert-koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koinVersion" }
+io-insert-koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koinVersion" }
 io-insert-koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "koinVersion" }
 
 #mockk
@@ -54,6 +55,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
-android-library = { id = "com.android.library", version.ref = "agp" }

@@ -1,0 +1,106 @@
+package com.yustar.auth.presentation.screen
+
+import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.yustar.auth.R
+import com.yustar.auth.presentation.LoginViewModel
+import com.yustar.auth.presentation.event.LoginUiEvent
+import com.yustar.auth.presentation.state.LoginUiState
+import com.yustar.auth.presentation.widget.TextInput
+import com.yustar.core.ui.PokeApp_JetpackComposeTheme
+import org.koin.androidx.compose.koinViewModel
+
+/**
+ * Created by Yustar Pramudana on 06/03/26.
+ */
+
+@Composable
+fun LoginScreen(viewModel: LoginViewModel = koinViewModel()) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    // Pass state and events down to a stateless content Composable
+    LoginContent(
+        uiState = uiState,
+        onEmailChanged = { viewModel.onEvent(LoginUiEvent.OnEmailChanged(it)) },
+        onPasswordChanged = { viewModel.onEvent(LoginUiEvent.OnPasswordChanged(it)) }
+    )
+}
+
+@Composable
+fun LoginContent(
+    uiState: LoginUiState, onEmailChanged: (String) -> Unit, onPasswordChanged: (String) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(100.dp))
+
+            Text(
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center,
+                text = stringResource(R.string.login_to_your_account)
+            )
+
+            Spacer(modifier = Modifier.height(100.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp)
+            ) {
+                TextInput(
+                    stringResource(R.string.email),
+                    uiState.email, stringResource(R.string.input_email),
+                    onEmailChanged
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                TextInput(
+                    stringResource(R.string.password),
+                    uiState.password, stringResource(R.string.input_password),
+                    onPasswordChanged
+                )
+            }
+        }
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_4)
+@Composable
+fun NightModePreviewLoginScreen() {
+    PokeApp_JetpackComposeTheme {
+        LoginContent(uiState = LoginUiState(email = "test@example.com"), {}, {})
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, device = Devices.PIXEL_4)
+@Composable
+fun LightModePreviewLoginScreen() {
+    PokeApp_JetpackComposeTheme {
+        LoginContent(uiState = LoginUiState(email = "test@example.com"), {}, {})
+    }
+}
