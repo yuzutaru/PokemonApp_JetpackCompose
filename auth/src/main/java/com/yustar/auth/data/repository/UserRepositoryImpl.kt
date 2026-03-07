@@ -2,6 +2,7 @@ package com.yustar.auth.data.repository
 
 import com.yustar.auth.data.local.User
 import com.yustar.auth.data.local.UserDao
+import java.util.Objects.hash
 
 class UserRepositoryImpl(
     private val userDao: UserDao
@@ -17,7 +18,7 @@ class UserRepositoryImpl(
     ) {
         val user = User(
             username = username,
-            password = password,
+            password = hash(password).toString(),
             firstName = firstName,
             lastName = lastName,
             address = address,
@@ -27,8 +28,8 @@ class UserRepositoryImpl(
     }
 
     override suspend fun login(username: String, password: String): Boolean {
-        val user = userDao.getUserByUsername(username)
-        return user?.password == password
+        val user = userDao.getUserByUsername(username) ?: return false
+        return user.password == hash(password).toString()
     }
 
     override suspend fun getUser(username: String): User? {
