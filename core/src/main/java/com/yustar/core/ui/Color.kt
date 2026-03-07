@@ -26,4 +26,7 @@ val Blue40 = Color(0xFF78AEFF)
 val Blue60 = Color(0xFF0F67FE)
 val Blue80 = Color(0xFF00349C)
 
+val Turquoise25 = Color(0xFF006B7F)
+
 val Red50 = Color(0xFFFA4D5E)
+val Red60 = Color(0xFFF34068)

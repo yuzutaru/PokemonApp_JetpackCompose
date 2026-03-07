@@ -35,11 +35,15 @@ fun TextInput(label: String, value: String = "", placeHolder: String, onEmailCha
             onValueChange = onEmailChange,
             placeholder = {
                 if (value.isEmpty())
-                    Text(placeHolder)
+                    Text(
+                        style = MaterialTheme.typography.bodyLarge,
+                        text = placeHolder
+                    )
             },
             modifier = Modifier
                 .fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            textStyle = MaterialTheme.typography.titleMedium
         )
     }
 }
