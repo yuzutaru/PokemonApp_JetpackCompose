@@ -3,12 +3,23 @@ package com.yustar.auth.domain
 import com.yustar.auth.data.repository.UserRepository
 import com.yustar.auth.session.SessionManager
 
-class LoginUserUseCase(
+/**
+ * Created by Yustar Pramudana on 06/03/26.
+ */
+
+interface LoginUserUseCase {
+    suspend operator fun invoke(
+        username: String,
+        password: String
+    ): Boolean
+}
+
+class LoginUserUseCaseImpl(
     private val repository: UserRepository,
     private val session: SessionManager
-) {
+) : LoginUserUseCase {
 
-    suspend operator fun invoke(
+    override suspend fun invoke(
         username: String,
         password: String
     ): Boolean {

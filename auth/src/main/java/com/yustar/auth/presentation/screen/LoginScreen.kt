@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yustar.auth.R
 import com.yustar.auth.presentation.LoginViewModel
 import com.yustar.auth.presentation.event.LoginUiEvent
@@ -44,20 +46,22 @@ import org.koin.androidx.compose.koinViewModel
  */
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = koinViewModel()) {
+fun LoginScreen(viewModel: LoginViewModel = koinViewModel(), onLoginSuccess: () -> Unit) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // Pass state and events down to a stateless content Composable
     LoginContent(
         uiState = uiState,
         onEmailChanged = { viewModel.onEvent(LoginUiEvent.OnEmailChanged(it)) },
-        onPasswordChanged = { viewModel.onEvent(LoginUiEvent.OnPasswordChanged(it)) }
+        onPasswordChanged = { viewModel.onEvent(LoginUiEvent.OnPasswordChanged(it)) },
+        onLogin = { viewModel.login { onLoginSuccess() } }
     )
 }
 
 @Composable
 fun LoginContent(
-    uiState: LoginUiState, onEmailChanged: (String) -> Unit, onPasswordChanged: (String) -> Unit
+    uiState: LoginUiState, onEmailChanged: (String) -> Unit, onPasswordChanged: (String) -> Unit,
+    onLogin: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -81,6 +85,16 @@ fun LoginContent(
             Column(
                 modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp)
             ) {
+                if (uiState.error.isNotEmpty()) {
+                    Text(
+                        text = uiState.error,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+
                 TextInput(
                     stringResource(R.string.email),
                     uiState.email, stringResource(R.string.input_email),
@@ -102,18 +116,26 @@ fun LoginContent(
                 modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(Turquoise25),
-                onClick = {},
+                enabled = !uiState.isLoading,
+                onClick = onLogin,
                 content = {
                     Column(
                         modifier = Modifier.fillMaxWidth().height(40.dp).padding(4.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(
-                            style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.background,
-                            text = stringResource(R.string.login)
-                        )
+                        if (uiState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.height(24.dp).width(24.dp),
+                                color = MaterialTheme.colorScheme.background
+                            )
+                        } else {
+                            Text(
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.background,
+                                text = stringResource(R.string.login)
+                            )
+                        }
                     }
                 }
             )
@@ -158,7 +180,10 @@ fun LoginContent(
 @Composable
 fun NightModePreviewLoginScreen() {
     PokeApp_JetpackComposeTheme {
-        LoginContent(uiState = LoginUiState(email = "test@example.com"), {}, {})
+        LoginContent(
+            uiState = LoginUiState(email = "test@example.com"), {},
+            {}, {}
+        )
     }
 }
 
@@ -166,6 +191,9 @@ fun NightModePreviewLoginScreen() {
 @Composable
 fun LightModePreviewLoginScreen() {
     PokeApp_JetpackComposeTheme {
-        LoginContent(uiState = LoginUiState(email = "test@example.com"), {}, {})
+        LoginContent(
+            uiState = LoginUiState(email = "test@example.com"), {},
+            {}, {}
+        )
     }
 }
