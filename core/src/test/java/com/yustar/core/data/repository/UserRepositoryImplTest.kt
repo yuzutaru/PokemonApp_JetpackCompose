@@ -1,7 +1,8 @@
-package com.yustar.auth.data.repository
+package com.yustar.core.data.repository
 
-import com.yustar.auth.data.local.User
-import com.yustar.auth.data.local.UserDao
+import com.yustar.core.data.local.User
+import com.yustar.core.data.local.UserDao
+import com.yustar.core.data.repository.UserRepositoryImpl
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify

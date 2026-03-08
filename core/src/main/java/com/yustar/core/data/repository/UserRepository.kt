@@ -1,6 +1,6 @@
-package com.yustar.auth.data.repository
+package com.yustar.core.data.repository
 
-import com.yustar.auth.data.local.User
+import com.yustar.core.data.local.User
 
 interface UserRepository {
     suspend fun register(

@@ -1,6 +1,6 @@
 package com.yustar.auth.domain
 
-import com.yustar.auth.data.repository.UserRepository
+import com.yustar.core.data.repository.UserRepository
 
 class UpdateUserProfileUseCase(
     private val repository: UserRepository

@@ -1,4 +1,4 @@
-package com.yustar.auth.data.local
+package com.yustar.core.data.local
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

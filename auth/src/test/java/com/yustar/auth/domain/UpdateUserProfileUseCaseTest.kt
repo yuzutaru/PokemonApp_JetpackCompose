@@ -1,6 +1,6 @@
 package com.yustar.auth.domain
 
-import com.yustar.auth.data.repository.UserRepository
+import com.yustar.core.data.repository.UserRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.just

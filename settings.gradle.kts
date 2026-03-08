@@ -26,3 +26,4 @@ rootProject.name = "PokeApp_JetpackCompose"
 include(":app")
 include(":core")
 include(":auth")
+include(":dashboard")

@@ -1,13 +1,13 @@
-package com.yustar.auth.local
+package com.yustar.core.local
 
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.yustar.auth.data.local.User
-import com.yustar.auth.data.local.UserDB
-import com.yustar.auth.data.local.UserDao
+import com.yustar.core.data.local.User
+import com.yustar.core.data.local.UserDB
+import com.yustar.core.data.local.UserDao
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert

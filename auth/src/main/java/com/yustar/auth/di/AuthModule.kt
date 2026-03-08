@@ -3,9 +3,9 @@ package com.yustar.auth.di
 import android.content.Context
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
-import com.yustar.auth.data.local.UserDB
-import com.yustar.auth.data.repository.UserRepository
-import com.yustar.auth.data.repository.UserRepositoryImpl
+import com.yustar.core.data.local.UserDB
+import com.yustar.core.data.repository.UserRepository
+import com.yustar.core.data.repository.UserRepositoryImpl
 import com.yustar.auth.domain.LoginUserUseCase
 import com.yustar.auth.domain.RegisterUserUseCase
 import com.yustar.auth.presentation.viewmodel.LoginViewModel

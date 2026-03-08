@@ -1,4 +1,4 @@
-package com.yustar.auth.data.local
+package com.yustar.core.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert

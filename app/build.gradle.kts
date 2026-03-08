@@ -60,6 +60,7 @@ dependencies {
 
     implementation(project(":auth"))
     implementation(project(":core"))
+    implementation(project(":dashboard"))
 
     //Koin
     implementation(libs.io.insert.koin.android)

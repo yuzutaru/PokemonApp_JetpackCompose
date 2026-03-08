@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.yustar.core"
+    namespace = "com.yustar.dashboard"
     compileSdk {
         version = release(36)
     }
@@ -27,11 +27,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-    kotlin {
-        jvmToolchain(17)
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     buildFeatures {
@@ -48,6 +45,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.material.icons.extended)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -56,29 +54,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    //Room
-    implementation(libs.androidx.room.runtime)
-    // optional - Kotlin Extensions and Coroutines support for Room
-    implementation(libs.androidx.room.ktx)
-    // optional - Test helpers
-    testImplementation(libs.androidx.room.testing)
-    // optional - Paging 3 Integration
-    implementation(libs.androidx.room.paging)
-    // ADD THIS LINE: This is what generates UserDB_Impl
-    ksp(libs.androidx.room.compiler)
+    implementation(project(":core"))
 
     //Koin
     implementation(libs.io.insert.koin.android)
     implementation(libs.io.insert.koin.androidx.compose)
     testImplementation(libs.io.insert.koin.test)
-
-    //Mockk
-    testImplementation(libs.io.mockk)
-
-    //Coroutine
-    implementation(libs.org.jetbrains.kotlinx.coroutines.android)
-    testImplementation(libs.org.jetbrains.kotlinx.coroutines.test)
-
-    //DataStore
-    implementation(libs.androidx.datastore.preferences)
 }
