@@ -10,6 +10,7 @@ import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.testing.TestNavHostController
 import androidx.test.platform.app.InstrumentationRegistry
 import com.yustar.auth.R
+import com.yustar.auth.domain.LoginResult
 import com.yustar.auth.domain.LoginUserUseCase
 import com.yustar.auth.domain.RegisterUserUseCase
 import com.yustar.auth.presentation.viewmodel.LoginViewModel
@@ -32,13 +33,14 @@ class NavigationTest : KoinTest {
     val composeTestRule = createComposeRule()
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
+    private val fakeLoginUserUseCase = FakeLoginUserUseCase()
 
     @Before
     fun setup() {
         stopKoin()
         startKoin {
             modules(module {
-                factory<LoginUserUseCase> { FakeLoginUserUseCase() }
+                factory<LoginUserUseCase> { fakeLoginUserUseCase }
                 factory<RegisterUserUseCase> { mockk(relaxed = true) }
                 viewModel { LoginViewModel(get()) }
                 viewModel { RegisterViewModel(get()) }
@@ -69,6 +71,7 @@ class NavigationTest : KoinTest {
 
     @Test
     fun navHost_loginSuccess_navigatesToMenu() {
+        fakeLoginUserUseCase.result = LoginResult.Success
         lateinit var navController: TestNavHostController
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current)

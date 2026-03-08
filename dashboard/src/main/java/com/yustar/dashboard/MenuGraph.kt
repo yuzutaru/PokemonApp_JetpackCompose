@@ -1,4 +1,4 @@
-package com.yustar.pokeapp_jetpackcompose
+package com.yustar.dashboard
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -14,7 +14,10 @@ fun NavGraphBuilder.menuGraph(navController: NavHostController) {
     navigation(route = "menu_route", startDestination = "menu" ) {
         composable("menu") {
             //Main Menu
-            DashboardScreen()
+            DashboardScreen(navController)
+        }
+        composable("pokemon_detail") {
+            //Pokemon Detail
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.yustar.pokeapp_jetpackcompose
+package com.yustar.auth
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController

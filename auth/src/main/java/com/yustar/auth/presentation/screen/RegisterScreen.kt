@@ -38,9 +38,9 @@ import com.yustar.auth.R
 import com.yustar.auth.presentation.event.RegisterUiEvent
 import com.yustar.auth.presentation.state.RegisterUiState
 import com.yustar.auth.presentation.viewmodel.RegisterViewModel
-import com.yustar.auth.presentation.widget.TextInput
 import com.yustar.core.ui.PokeApp_JetpackComposeTheme
 import com.yustar.core.ui.Red60
+import com.yustar.core.ui.widget.TextInput
 import org.koin.androidx.compose.koinViewModel
 
 /**

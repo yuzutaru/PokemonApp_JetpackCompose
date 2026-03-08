@@ -59,8 +59,9 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     implementation(project(":auth"))
-    implementation(project(":core"))
     implementation(project(":dashboard"))
+    implementation(project(":core"))
+
 
     //Koin
     implementation(libs.io.insert.koin.android)

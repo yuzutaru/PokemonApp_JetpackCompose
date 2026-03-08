@@ -1,4 +1,4 @@
-package com.yustar.auth.session
+package com.yustar.core.session
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences

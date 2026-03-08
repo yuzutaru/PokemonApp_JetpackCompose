@@ -1,4 +1,4 @@
-package com.yustar.auth.domain
+package com.yustar.dashboard.domain
 
 import com.yustar.core.data.repository.UserRepository
 

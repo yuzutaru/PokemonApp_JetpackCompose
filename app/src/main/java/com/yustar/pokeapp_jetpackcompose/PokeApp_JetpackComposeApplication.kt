@@ -2,7 +2,7 @@ package com.yustar.pokeapp_jetpackcompose
 
 import android.app.Application
 import com.yustar.auth.di.authModule
-import com.yustar.dashboard.presentation.di.dashboardModule
+import com.yustar.dashboard.di.dashboardModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

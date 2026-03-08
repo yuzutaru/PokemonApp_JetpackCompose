@@ -2,6 +2,7 @@ package com.yustar.auth.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.yustar.auth.domain.LoginResult
 import com.yustar.auth.domain.LoginUserUseCase
 import com.yustar.auth.presentation.event.LoginUiEvent
 import com.yustar.auth.presentation.state.LoginUiState
@@ -25,13 +26,18 @@ class LoginViewModel(private val loginUseCase: LoginUserUseCase): ViewModel() {
         }
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = "") }
-            val success = loginUseCase(_uiState.value.email, _uiState.value.password)
+            val result = loginUseCase(_uiState.value.email, _uiState.value.password)
 
-            if (success) {
-                _uiState.update { it.copy(isLoading = false) }
-                onSuccess()
-            } else {
-                _uiState.update { it.copy(isLoading = false, error = "Invalid credentials") }
+            _uiState.update { it.copy(isLoading = false) }
+
+            when (result) {
+                LoginResult.Success -> onSuccess()
+                LoginResult.InvalidPassword -> {
+                    _uiState.update { it.copy(error = "Invalid password") }
+                }
+                LoginResult.UserNotFound -> {
+                    _uiState.update { it.copy(error = "User not found. Please register first.") }
+                }
             }
         }
     }

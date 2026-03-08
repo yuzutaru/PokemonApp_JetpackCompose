@@ -1,9 +1,10 @@
-package com.yustar.auth.presentation.widget
+package com.yustar.core.presentation.widget
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.performClick
+import com.yustar.core.ui.widget.TextInput
 import org.junit.Rule
 import org.junit.Test
 

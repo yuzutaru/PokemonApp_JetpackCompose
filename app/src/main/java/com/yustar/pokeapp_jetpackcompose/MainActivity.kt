@@ -9,10 +9,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.yustar.auth.presentation.screen.LoginScreen
-import com.yustar.auth.session.SessionManager
+import com.yustar.auth.authGraph
+import com.yustar.core.session.SessionManager
+import com.yustar.dashboard.menuGraph
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {

@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Boy
@@ -28,7 +27,7 @@ import com.yustar.dashboard.R
 import com.yustar.dashboard.presentation.viewmodel.DashboardViewModel
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.collectAsState
-import com.yustar.core.ui.Blue60
+import androidx.navigation.NavHostController
 import com.yustar.core.ui.Gray20
 import com.yustar.core.ui.Gray80
 import com.yustar.core.ui.Turquoise25
@@ -46,7 +45,7 @@ data class Menu(
 )
 
 @Composable
-fun DashboardScreen(viewModel: DashboardViewModel = koinViewModel()) {
+fun DashboardScreen(navController: NavHostController, viewModel: DashboardViewModel = koinViewModel()) {
     DashboardContent(
         selectedMenu = viewModel.uiState.collectAsState().value.selectedTab,
         onMenuSelected = { viewModel.onEvent(DashboardUiEvent.OnMenuSelected(it)) }

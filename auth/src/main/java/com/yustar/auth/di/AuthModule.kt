@@ -10,7 +10,7 @@ import com.yustar.auth.domain.LoginUserUseCase
 import com.yustar.auth.domain.RegisterUserUseCase
 import com.yustar.auth.presentation.viewmodel.LoginViewModel
 import com.yustar.auth.presentation.viewmodel.RegisterViewModel
-import com.yustar.auth.session.SessionManager
+import com.yustar.core.session.SessionManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module

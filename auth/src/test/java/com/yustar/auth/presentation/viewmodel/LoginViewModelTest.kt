@@ -1,5 +1,6 @@
 package com.yustar.auth.presentation.viewmodel
 
+import com.yustar.auth.domain.LoginResult
 import com.yustar.auth.domain.LoginUserUseCase
 import com.yustar.auth.presentation.event.LoginUiEvent
 import io.mockk.coEvery
@@ -58,7 +59,7 @@ class LoginViewModelTest {
         viewModel.onEvent(LoginUiEvent.OnEmailChanged(email))
         viewModel.onEvent(LoginUiEvent.OnPasswordChanged(password))
 
-        coEvery { loginUseCase(email, password) } returns true
+        coEvery { loginUseCase(email, password) } returns LoginResult.Success
 
         // When
         viewModel.login { successCalled = true }
@@ -70,7 +71,7 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `when login fails, error state should be updated`() = runTest {
+    fun `when login fails with invalid password, error state should be updated`() = runTest {
         // Given
         val email = "test@example.com"
         val password = "wrong_password"
@@ -78,14 +79,33 @@ class LoginViewModelTest {
         viewModel.onEvent(LoginUiEvent.OnEmailChanged(email))
         viewModel.onEvent(LoginUiEvent.OnPasswordChanged(password))
 
-        coEvery { loginUseCase(email, password) } returns false
+        coEvery { loginUseCase(email, password) } returns LoginResult.InvalidPassword
 
         // When
         viewModel.login {}
         advanceUntilIdle()
 
         // Then
-        Assert.assertEquals("Invalid credentials", viewModel.uiState.value.error)
+        Assert.assertEquals("Invalid password", viewModel.uiState.value.error)
+    }
+
+    @Test
+    fun `when login fails because user not found, error state should be updated`() = runTest {
+        // Given
+        val email = "notfound@example.com"
+        val password = "any_password"
+
+        viewModel.onEvent(LoginUiEvent.OnEmailChanged(email))
+        viewModel.onEvent(LoginUiEvent.OnPasswordChanged(password))
+
+        coEvery { loginUseCase(email, password) } returns LoginResult.UserNotFound
+
+        // When
+        viewModel.login {}
+        advanceUntilIdle()
+
+        // Then
+        Assert.assertEquals("User not found. Please register first.", viewModel.uiState.value.error)
     }
 
     @Test

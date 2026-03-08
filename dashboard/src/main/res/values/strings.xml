@@ -2,4 +2,15 @@
 <resources>
     <string name="home">Home</string>
     <string name="profile">Profile</string>
+    <string name="update_profile">Update Profile</string>
+    <string name="first_name">First Name</string>
+    <string name="input_first_name">Input first name</string>
+    <string name="last_name">Last Name</string>
+    <string name="input_last_name">Input last name</string>
+    <string name="address">Address</string>
+    <string name="input_address">Input address</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="input_phone_number">Input phone number</string>
+    <string name="save">Save</string>
+    <string name="profile_updated_successfully">Profile updated successfully</string>
 </resources>
