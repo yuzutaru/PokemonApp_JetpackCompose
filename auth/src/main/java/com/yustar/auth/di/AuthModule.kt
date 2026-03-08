@@ -1,14 +1,17 @@
 package com.yustar.auth.di
 
+import android.content.Context
+import androidx.datastore.preferences.preferencesDataStore
 import androidx.room.Room
 import com.yustar.auth.data.local.UserDB
 import com.yustar.auth.data.repository.UserRepository
 import com.yustar.auth.data.repository.UserRepositoryImpl
 import com.yustar.auth.domain.LoginUserUseCase
-import com.yustar.auth.domain.LoginUserUseCaseImpl
 import com.yustar.auth.domain.RegisterUserUseCase
-import com.yustar.auth.presentation.LoginViewModel
+import com.yustar.auth.presentation.viewmodel.LoginViewModel
+import com.yustar.auth.presentation.viewmodel.RegisterViewModel
 import com.yustar.auth.session.SessionManager
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -16,11 +19,16 @@ import org.koin.dsl.module
  * Created by Yustar Pramudana on 06/03/26.
  */
 
+private val Context.dataStore by preferencesDataStore(name = "session_prefs")
+
 val authModule = module {
+    // DataStore
+    single { androidContext().dataStore }
+
     // Room
     single {
         Room.databaseBuilder(
-            get(),
+            androidContext(),
             UserDB::class.java,
             "app_db"
         ).build()
@@ -37,9 +45,10 @@ val authModule = module {
     single { SessionManager(get()) }
 
     // UseCases
-    factory<LoginUserUseCase> { LoginUserUseCaseImpl(get(), get()) }
+    factory { LoginUserUseCase(get(), get()) }
     factory { RegisterUserUseCase(get()) }
 
     //ViewModel
     viewModel { LoginViewModel(get()) }
+    viewModel { RegisterViewModel(get()) }
 }

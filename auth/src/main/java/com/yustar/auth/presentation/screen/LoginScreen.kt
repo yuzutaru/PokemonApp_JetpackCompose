@@ -1,6 +1,7 @@
 package com.yustar.auth.presentation.screen
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -20,21 +22,22 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yustar.auth.R
-import com.yustar.auth.presentation.LoginViewModel
 import com.yustar.auth.presentation.event.LoginUiEvent
 import com.yustar.auth.presentation.state.LoginUiState
+import com.yustar.auth.presentation.viewmodel.LoginViewModel
 import com.yustar.auth.presentation.widget.TextInput
 import com.yustar.core.ui.PokeApp_JetpackComposeTheme
 import com.yustar.core.ui.Red60
@@ -46,27 +49,44 @@ import org.koin.androidx.compose.koinViewModel
  */
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = koinViewModel(), onLoginSuccess: () -> Unit) {
+fun LoginScreen(
+    viewModel: LoginViewModel = koinViewModel(),
+    onLoginSuccess: () -> Unit,
+    onRegisterClick: () -> Unit
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(uiState.error) {
+        if (uiState.error.isNotEmpty()) {
+            Toast.makeText(context, uiState.error, Toast.LENGTH_SHORT).show()
+            viewModel.clearError()
+        }
+    }
 
     // Pass state and events down to a stateless content Composable
     LoginContent(
         uiState = uiState,
         onEmailChanged = { viewModel.onEvent(LoginUiEvent.OnEmailChanged(it)) },
         onPasswordChanged = { viewModel.onEvent(LoginUiEvent.OnPasswordChanged(it)) },
-        onLogin = { viewModel.login { onLoginSuccess() } }
+        onLogin = { viewModel.login { onLoginSuccess() } },
+        onRegisterClick = onRegisterClick
     )
 }
 
 @Composable
 fun LoginContent(
-    uiState: LoginUiState, onEmailChanged: (String) -> Unit, onPasswordChanged: (String) -> Unit,
-    onLogin: () -> Unit
+    uiState: LoginUiState,
+    onEmailChanged: (String) -> Unit,
+    onPasswordChanged: (String) -> Unit,
+    onLogin: () -> Unit,
+    onRegisterClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .safeDrawingPadding(),
         contentAlignment = Alignment.TopCenter
     ) {
         Column(
@@ -85,20 +105,10 @@ fun LoginContent(
             Column(
                 modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp)
             ) {
-                if (uiState.error.isNotEmpty()) {
-                    Text(
-                        text = uiState.error,
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
-
                 TextInput(
                     stringResource(R.string.email),
                     uiState.email, stringResource(R.string.input_email),
-                    onEmailChanged
+                    onValueChange = onEmailChanged
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -106,7 +116,8 @@ fun LoginContent(
                 TextInput(
                     stringResource(R.string.password),
                     uiState.password, stringResource(R.string.input_password),
-                    onPasswordChanged
+                    isPassword = true,
+                    onValueChange = onPasswordChanged
                 )
             }
 
@@ -157,7 +168,7 @@ fun LoginContent(
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(Transparent),
                     contentPadding = PaddingValues(0.dp),
-                    onClick = {}
+                    onClick = onRegisterClick
                 ) {
                     Column(
                         modifier = Modifier.padding(2.dp),
@@ -182,7 +193,7 @@ fun NightModePreviewLoginScreen() {
     PokeApp_JetpackComposeTheme {
         LoginContent(
             uiState = LoginUiState(email = "test@example.com"), {},
-            {}, {}
+            {}, {}, {}
         )
     }
 }
@@ -193,7 +204,7 @@ fun LightModePreviewLoginScreen() {
     PokeApp_JetpackComposeTheme {
         LoginContent(
             uiState = LoginUiState(email = "test@example.com"), {},
-            {}, {}
+            {}, {}, {}
         )
     }
 }

@@ -7,19 +7,12 @@ import com.yustar.auth.session.SessionManager
  * Created by Yustar Pramudana on 06/03/26.
  */
 
-interface LoginUserUseCase {
-    suspend operator fun invoke(
-        username: String,
-        password: String
-    ): Boolean
-}
-
-class LoginUserUseCaseImpl(
+open class LoginUserUseCase(
     private val repository: UserRepository,
     private val session: SessionManager
-) : LoginUserUseCase {
+) {
 
-    override suspend fun invoke(
+    open suspend operator fun invoke(
         username: String,
         password: String
     ): Boolean {

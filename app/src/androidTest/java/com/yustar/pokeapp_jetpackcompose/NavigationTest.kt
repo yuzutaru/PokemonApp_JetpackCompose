@@ -11,7 +11,10 @@ import androidx.navigation.testing.TestNavHostController
 import androidx.test.platform.app.InstrumentationRegistry
 import com.yustar.auth.R
 import com.yustar.auth.domain.LoginUserUseCase
-import com.yustar.auth.presentation.LoginViewModel
+import com.yustar.auth.domain.RegisterUserUseCase
+import com.yustar.auth.presentation.viewmodel.LoginViewModel
+import com.yustar.auth.presentation.viewmodel.RegisterViewModel
+import io.mockk.mockk
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -22,10 +25,6 @@ import org.koin.core.context.stopKoin
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.test.KoinTest
-
-class FakeLoginUserUseCase : LoginUserUseCase {
-    override suspend fun invoke(username: String, password: String): Boolean = true
-}
 
 class NavigationTest : KoinTest {
 
@@ -40,7 +39,9 @@ class NavigationTest : KoinTest {
         startKoin {
             modules(module {
                 factory<LoginUserUseCase> { FakeLoginUserUseCase() }
+                factory<RegisterUserUseCase> { mockk(relaxed = true) }
                 viewModel { LoginViewModel(get()) }
+                viewModel { RegisterViewModel(get()) }
             })
         }
     }
@@ -56,23 +57,23 @@ class NavigationTest : KoinTest {
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current)
             navController.navigatorProvider.addNavigator(ComposeNavigator())
-            PokeAppNavHost(navController = navController, startDestination = "login")
+            PokeAppNavHost(navController = navController, startDestination = "login_route")
         }
 
         // Check that the login screen is displayed
         composeTestRule.onNodeWithText(context.getString(R.string.login_to_your_account)).assertIsDisplayed()
         
-        // Verify current destination is "login"
+        // Verify current destination is "login" (the start destination inside "login_route")
         assertEquals("login", navController.currentBackStackEntry?.destination?.route)
     }
 
     @Test
-    fun navHost_loginSuccess_navigatesToHome() {
+    fun navHost_loginSuccess_navigatesToMenu() {
         lateinit var navController: TestNavHostController
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current)
             navController.navigatorProvider.addNavigator(ComposeNavigator())
-            PokeAppNavHost(navController = navController, startDestination = "login")
+            PokeAppNavHost(navController = navController, startDestination = "login_route")
         }
 
         // Input some text
@@ -82,21 +83,25 @@ class NavigationTest : KoinTest {
         // Click login
         composeTestRule.onNodeWithText(context.getString(R.string.login)).performClick()
 
-        // Verify current destination is "home"
+        // Verify current destination is "menu" (the start destination inside "menu_route")
         composeTestRule.waitForIdle()
-        assertEquals("home", navController.currentBackStackEntry?.destination?.route)
+        assertEquals("menu", navController.currentBackStackEntry?.destination?.route)
     }
 
     @Test
-    fun navHost_startDestinationIsHome() {
+    fun navHost_clickRegister_navigatesToRegister() {
         lateinit var navController: TestNavHostController
         composeTestRule.setContent {
             navController = TestNavHostController(LocalContext.current)
             navController.navigatorProvider.addNavigator(ComposeNavigator())
-            PokeAppNavHost(navController = navController, startDestination = "home")
+            PokeAppNavHost(navController = navController, startDestination = "login_route")
         }
 
-        // Verify current destination is "home"
-        assertEquals("home", navController.currentBackStackEntry?.destination?.route)
+        // Click register
+        composeTestRule.onNodeWithText(context.getString(R.string.register)).performClick()
+
+        // Verify current destination is "register"
+        composeTestRule.waitForIdle()
+        assertEquals("register", navController.currentBackStackEntry?.destination?.route)
     }
 }

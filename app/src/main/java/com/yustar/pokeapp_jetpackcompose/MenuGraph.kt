@@ -1,0 +1,18 @@
+package com.yustar.pokeapp_jetpackcompose
+
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
+import androidx.navigation.navigation
+
+/**
+ * Created by Yustar Pramudana on 08/03/26.
+ */
+
+fun NavGraphBuilder.menuGraph(navController: NavHostController) {
+    navigation(route = "menu_route", startDestination = "menu" ) {
+        composable("menu") {
+            //Main Menu
+        }
+    }
+}

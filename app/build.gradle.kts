@@ -66,4 +66,9 @@ dependencies {
     implementation(libs.io.insert.koin.androidx.compose)
     testImplementation(libs.io.insert.koin.test)
     androidTestImplementation(libs.io.insert.koin.test)
+
+    //Mockk
+    testImplementation(libs.io.mockk)
+    androidTestImplementation(libs.io.mockk)
+    androidTestImplementation(libs.io.mockk.android)
 }

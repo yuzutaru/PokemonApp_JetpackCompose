@@ -14,6 +14,11 @@ class RegisterUserUseCase(
         address: String = "",
         phoneNumber: String = ""
     ) {
+        // Check if user already exists
+        if (repository.getUser(username) != null) {
+            throw Exception("User with this username/email is already registered")
+        }
+
         repository.register(
             username = username,
             password = password,

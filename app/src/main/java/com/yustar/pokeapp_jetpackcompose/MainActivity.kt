@@ -26,11 +26,11 @@ class MainActivity : ComponentActivity() {
             val loggedUser by sessionManager.loggedUser
                 .collectAsState(initial = null)
 
-            val startDestination = if (loggedUser != null) "home" else "login"
+            val startRoute = if (loggedUser != null) "menu_route" else "login_route"
 
             PokeAppNavHost(
                 navController = navController,
-                startDestination = startDestination
+                startDestination = startRoute
             )
         }
     }
@@ -45,20 +45,7 @@ fun PokeAppNavHost(
         navController = navController,
         startDestination = startDestination
     ) {
-        composable("login") {
-            LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate("home") {
-                        popUpTo("login") {
-                            inclusive = true
-                        }
-                    }
-                }
-            )
-        }
-
-        composable("home") {
-            // Placeholder for HomeScreen
-        }
+        authGraph(navController)
+        menuGraph(navController)
     }
 }

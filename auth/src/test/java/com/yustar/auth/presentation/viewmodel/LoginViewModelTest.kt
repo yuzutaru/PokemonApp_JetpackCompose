@@ -1,7 +1,6 @@
 package com.yustar.auth.presentation.viewmodel
 
 import com.yustar.auth.domain.LoginUserUseCase
-import com.yustar.auth.presentation.LoginViewModel
 import com.yustar.auth.presentation.event.LoginUiEvent
 import io.mockk.coEvery
 import io.mockk.mockk
@@ -87,5 +86,47 @@ class LoginViewModelTest {
 
         // Then
         Assert.assertEquals("Invalid credentials", viewModel.uiState.value.error)
+    }
+
+    @Test
+    fun `when email is empty, login should fail with error`() = runTest {
+        // Given
+        viewModel.onEvent(LoginUiEvent.OnEmailChanged(""))
+        viewModel.onEvent(LoginUiEvent.OnPasswordChanged("password123"))
+
+        // When
+        viewModel.login {}
+        advanceUntilIdle()
+
+        // Then
+        Assert.assertEquals("Email and password are required", viewModel.uiState.value.error)
+    }
+
+    @Test
+    fun `when password is empty, login should fail with error`() = runTest {
+        // Given
+        viewModel.onEvent(LoginUiEvent.OnEmailChanged("test@example.com"))
+        viewModel.onEvent(LoginUiEvent.OnPasswordChanged(""))
+
+        // When
+        viewModel.login {}
+        advanceUntilIdle()
+
+        // Then
+        Assert.assertEquals("Email and password are required", viewModel.uiState.value.error)
+    }
+
+    @Test
+    fun `clearError should reset error state`() = runTest {
+        // Given
+        viewModel.onEvent(LoginUiEvent.OnEmailChanged(""))
+        viewModel.login {}
+        Assert.assertEquals("Email and password are required", viewModel.uiState.value.error)
+
+        // When
+        viewModel.clearError()
+
+        // Then
+        Assert.assertEquals("", viewModel.uiState.value.error)
     }
 }

@@ -25,7 +25,8 @@ class LoginScreenTest {
                 uiState = LoginUiState(),
                 onEmailChanged = {},
                 onPasswordChanged = {},
-                onLogin = {}
+                onLogin = {},
+                onRegisterClick = {}
             )
         }
 
@@ -43,7 +44,8 @@ class LoginScreenTest {
                 uiState = LoginUiState(error = errorMessage),
                 onEmailChanged = {},
                 onPasswordChanged = {},
-                onLogin = {}
+                onLogin = {},
+                onRegisterClick = {}
             )
         }
 
@@ -57,7 +59,8 @@ class LoginScreenTest {
                 uiState = LoginUiState(isLoading = true),
                 onEmailChanged = {},
                 onPasswordChanged = {},
-                onLogin = {}
+                onLogin = {},
+                onRegisterClick = {}
             )
         }
 
@@ -73,7 +76,8 @@ class LoginScreenTest {
                 uiState = LoginUiState(),
                 onEmailChanged = { email = it },
                 onPasswordChanged = {},
-                onLogin = {}
+                onLogin = {},
+                onRegisterClick = {}
             )
         }
 
@@ -89,7 +93,8 @@ class LoginScreenTest {
                 uiState = LoginUiState(),
                 onEmailChanged = {},
                 onPasswordChanged = { password = it },
-                onLogin = {}
+                onLogin = {},
+                onRegisterClick = {}
             )
         }
 
@@ -105,7 +110,8 @@ class LoginScreenTest {
                 uiState = LoginUiState(),
                 onEmailChanged = {},
                 onPasswordChanged = {},
-                onLogin = { loginClicked = true }
+                onLogin = { loginClicked = true },
+                onRegisterClick = {}
             )
         }
 
