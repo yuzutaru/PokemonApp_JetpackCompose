@@ -55,13 +55,35 @@ import org.koin.androidx.compose.koinViewModel
 fun MenuScreen(paddingValues: PaddingValues, viewModel: MenuViewModel = koinViewModel()) {
     val pokemonPagingItems = viewModel.pokemonPagingData.collectAsLazyPagingItems()
 
-    MenuContent(paddingValues, pokemonPagingItems)
+    MenuContent(
+        paddingValues = paddingValues,
+        pokemonPagingItems = pokemonPagingItems
+    )
 }
 
 @Composable
 fun MenuContent(
     paddingValues: PaddingValues,
     pokemonPagingItems: LazyPagingItems<PokemonEntity>
+) {
+    MenuContentInternal(
+        paddingValues = paddingValues,
+        itemCount = pokemonPagingItems.itemCount,
+        pokemonAtIndex = { index -> pokemonPagingItems[index] },
+        itemKey = pokemonPagingItems.itemKey { it.name },
+        refreshState = pokemonPagingItems.loadState.refresh,
+        appendState = pokemonPagingItems.loadState.append
+    )
+}
+
+@Composable
+private fun MenuContentInternal(
+    paddingValues: PaddingValues,
+    itemCount: Int,
+    pokemonAtIndex: (Int) -> PokemonEntity?,
+    itemKey: (Int) -> Any,
+    refreshState: LoadState,
+    appendState: LoadState
 ) {
     Box(
         modifier = Modifier
@@ -78,28 +100,28 @@ fun MenuContent(
             modifier = Modifier.fillMaxSize()
         ) {
             items(
-                count = pokemonPagingItems.itemCount,
-                key = pokemonPagingItems.itemKey { it.name }
+                count = itemCount,
+                key = itemKey
             ) { index ->
-                val pokemon = pokemonPagingItems[index]
+                val pokemon = pokemonAtIndex(index)
                 if (pokemon != null) {
                     PokemonItem(pokemon = pokemon)
                 }
             }
 
             when {
-                pokemonPagingItems.loadState.refresh is LoadState.Loading -> {
+                refreshState is LoadState.Loading -> {
                     item(span = { GridItemSpan(2) }) {
                         LoadingIndicator(modifier = Modifier.fillMaxWidth().padding(32.dp))
                     }
                 }
-                pokemonPagingItems.loadState.append is LoadState.Loading -> {
+                appendState is LoadState.Loading -> {
                     item(span = { GridItemSpan(2) }) {
                         LoadingIndicator(modifier = Modifier.fillMaxWidth().padding(16.dp))
                     }
                 }
-                pokemonPagingItems.loadState.refresh is LoadState.Error -> {
-                    val e = pokemonPagingItems.loadState.refresh as LoadState.Error
+                refreshState is LoadState.Error -> {
+                    val e = refreshState as LoadState.Error
                     item(span = { GridItemSpan(2) }) {
                         Text(
                             text = e.error.localizedMessage ?: "Unknown Error",
@@ -125,7 +147,7 @@ fun LoadingIndicator(modifier: Modifier = Modifier) {
 
 @Composable
 fun PokemonItem(pokemon: PokemonEntity) {
-    val id = pokemon.url.split("/").filter { it.isNotEmpty() }.last()
+    val id = pokemon.url.split("/").filter { it.isNotEmpty() }.lastOrNull() ?: "1"
     val imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
     
     // Background colors similar to the image
@@ -135,7 +157,11 @@ fun PokemonItem(pokemon: PokemonEntity) {
         Color(0xFFFFE082), // Soft Yellow (Pikachu)
         Color(0xFF81D4FA)  // Soft Blue (Polywag)
     )
-    val backgroundColor = colors[id.toInt() % colors.size]
+    val backgroundColor = try {
+        colors[id.toInt() % colors.size]
+    } catch (e: Exception) {
+        colors[0]
+    }
 
     Surface(
         modifier = Modifier
@@ -193,10 +219,58 @@ fun PokemonItem(pokemon: PokemonEntity) {
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_4)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, device = Devices.PIXEL_4, showBackground = true)
 @Composable
-fun NightModePreviewMenuScreen() {
+fun LightModePreviewMenuContent() {
+    val pokemonList = listOf(
+        PokemonEntity("bulbasaur", "https://pokeapi.co/api/v2/pokemon/1/", 1),
+        PokemonEntity("ivysaur", "https://pokeapi.co/api/v2/pokemon/2/", 1),
+        PokemonEntity("venusaur", "https://pokeapi.co/api/v2/pokemon/3/", 1),
+        PokemonEntity("charmander", "https://pokeapi.co/api/v2/pokemon/4/", 1),
+        PokemonEntity("charmeleon", "https://pokeapi.co/api/v2/pokemon/5/", 1),
+        PokemonEntity("charizard", "https://pokeapi.co/api/v2/pokemon/6/", 1)
+    )
+
     PokeApp_JetpackComposeTheme {
-        // Placeholder for preview
+        MenuContentInternal(
+            paddingValues = PaddingValues(0.dp),
+            itemCount = pokemonList.size,
+            pokemonAtIndex = { pokemonList[it] },
+            itemKey = { pokemonList[it].name },
+            refreshState = LoadState.NotLoading(false),
+            appendState = LoadState.NotLoading(false)
+        )
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, device = Devices.PIXEL_4, showBackground = true)
+@Composable
+fun NightModePreviewMenuContent() {
+    val pokemonList = listOf(
+        PokemonEntity("bulbasaur", "https://pokeapi.co/api/v2/pokemon/1/", 1),
+        PokemonEntity("ivysaur", "https://pokeapi.co/api/v2/pokemon/2/", 1),
+        PokemonEntity("venusaur", "https://pokeapi.co/api/v2/pokemon/3/", 1),
+        PokemonEntity("charmander", "https://pokeapi.co/api/v2/pokemon/4/", 1)
+    )
+
+    PokeApp_JetpackComposeTheme {
+        MenuContentInternal(
+            paddingValues = PaddingValues(0.dp),
+            itemCount = pokemonList.size,
+            pokemonAtIndex = { pokemonList[it] },
+            itemKey = { pokemonList[it].name },
+            refreshState = LoadState.NotLoading(false),
+            appendState = LoadState.NotLoading(false)
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewPokemonItem() {
+    PokeApp_JetpackComposeTheme {
+        Box(modifier = Modifier.padding(16.dp).size(200.dp)) {
+            PokemonItem(PokemonEntity("bulbasaur", "https://pokeapi.co/api/v2/pokemon/1/", 0))
+        }
     }
 }
