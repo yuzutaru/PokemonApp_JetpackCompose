@@ -21,10 +21,12 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -66,16 +68,28 @@ fun MenuContent(
     paddingValues: PaddingValues,
     pokemonPagingItems: LazyPagingItems<PokemonEntity>
 ) {
+    val pagingItemKey = pokemonPagingItems.itemKey { it.name }
+
     MenuContentInternal(
         paddingValues = paddingValues,
         itemCount = pokemonPagingItems.itemCount,
-        pokemonAtIndex = { index -> pokemonPagingItems[index] },
-        itemKey = pokemonPagingItems.itemKey { it.name },
+        pokemonAtIndex = { index ->
+            if (index < pokemonPagingItems.itemCount) pokemonPagingItems[index] else null
+        },
+        itemKey = { index ->
+            if (index < pokemonPagingItems.itemCount) {
+                pagingItemKey(index)
+            } else {
+                index
+            }
+        },
         refreshState = pokemonPagingItems.loadState.refresh,
-        appendState = pokemonPagingItems.loadState.append
+        appendState = pokemonPagingItems.loadState.append,
+        onRefresh = { pokemonPagingItems.refresh() }
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MenuContentInternal(
     paddingValues: PaddingValues,
@@ -83,9 +97,12 @@ private fun MenuContentInternal(
     pokemonAtIndex: (Int) -> PokemonEntity?,
     itemKey: (Int) -> Any,
     refreshState: LoadState,
-    appendState: LoadState
+    appendState: LoadState,
+    onRefresh: () -> Unit
 ) {
-    Box(
+    PullToRefreshBox(
+        isRefreshing = refreshState is LoadState.Loading && itemCount > 0,
+        onRefresh = onRefresh,
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
@@ -110,7 +127,7 @@ private fun MenuContentInternal(
             }
 
             when {
-                refreshState is LoadState.Loading -> {
+                refreshState is LoadState.Loading && itemCount == 0 -> {
                     item(span = { GridItemSpan(2) }) {
                         LoadingIndicator(modifier = Modifier.fillMaxWidth().padding(32.dp))
                     }
@@ -238,7 +255,8 @@ fun LightModePreviewMenuContent() {
             pokemonAtIndex = { pokemonList[it] },
             itemKey = { pokemonList[it].name },
             refreshState = LoadState.NotLoading(false),
-            appendState = LoadState.NotLoading(false)
+            appendState = LoadState.NotLoading(false),
+            onRefresh = {}
         )
     }
 }
@@ -260,7 +278,8 @@ fun NightModePreviewMenuContent() {
             pokemonAtIndex = { pokemonList[it] },
             itemKey = { pokemonList[it].name },
             refreshState = LoadState.NotLoading(false),
-            appendState = LoadState.NotLoading(false)
+            appendState = LoadState.NotLoading(false),
+            onRefresh = {}
         )
     }
 }
