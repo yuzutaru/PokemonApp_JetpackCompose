@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -108,6 +109,7 @@ private fun MenuContentInternal(
             .background(MaterialTheme.colorScheme.background)
             .padding(paddingValues)
             .safeDrawingPadding()
+            .testTag("pull_to_refresh_box")
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
