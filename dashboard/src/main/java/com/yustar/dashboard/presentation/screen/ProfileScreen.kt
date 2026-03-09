@@ -1,5 +1,6 @@
 package com.yustar.dashboard.presentation.screen
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -48,6 +49,7 @@ import org.koin.androidx.compose.koinViewModel
  * Created by Yustar Pramudana on 08/03/26.
  */
 
+@SuppressLint("LocalContextGetResourceValueCall")
 @Composable
 fun ProfileScreen(
     paddingValues: PaddingValues,

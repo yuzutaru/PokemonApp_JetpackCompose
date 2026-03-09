@@ -2,12 +2,17 @@ package com.yustar.dashboard.presentation.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Boy
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -24,14 +29,16 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.yustar.core.ui.PokeApp_JetpackComposeTheme
 import com.yustar.dashboard.R
-import com.yustar.dashboard.presentation.viewmodel.DashboardViewModel
-import org.koin.androidx.compose.koinViewModel
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.yustar.core.ui.Gray20
 import com.yustar.core.ui.Gray80
 import com.yustar.core.ui.Turquoise25
 import com.yustar.dashboard.presentation.event.DashboardUiEvent
+import com.yustar.dashboard.presentation.state.DashboardUiState
+import com.yustar.dashboard.presentation.viewmodel.DashboardViewModel
+import org.koin.androidx.compose.koinViewModel
 
 /**
  * Created by Yustar Pramudana on 08/03/26.
@@ -46,14 +53,17 @@ data class Menu(
 
 @Composable
 fun DashboardScreen(navController: NavHostController, viewModel: DashboardViewModel = koinViewModel()) {
+    val uiState = viewModel.uiState.collectAsState()
+
     DashboardContent(
-        selectedMenu = viewModel.uiState.collectAsState().value.selectedTab,
+        uiState = uiState.value,
+        selectedMenu = uiState.value.selectedTab,
         onMenuSelected = { viewModel.onEvent(DashboardUiEvent.OnMenuSelected(it)) }
     )
 }
 
 @Composable
-fun DashboardContent(selectedMenu: Int, onMenuSelected: (Int) -> Unit) {
+fun DashboardContent(uiState: DashboardUiState, selectedMenu: Int, onMenuSelected: (Int) -> Unit) {
     val menus = arrayListOf(
         Menu("home", stringResource(R.string.home), Icons.Default.Home, stringResource(R.string.home)),
         Menu("profile", stringResource(R.string.profile), Icons.Default.Boy, stringResource(R.string.profile))
@@ -101,6 +111,19 @@ fun DashboardContent(selectedMenu: Int, onMenuSelected: (Int) -> Unit) {
                 1 -> { ProfileScreen(contentPadding) }
             }
         }
+
+        if (uiState.isLoading) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.height(24.dp).width(24.dp),
+                    color = Turquoise25
+                )
+            }
+        }
     }
 }
 
@@ -108,7 +131,7 @@ fun DashboardContent(selectedMenu: Int, onMenuSelected: (Int) -> Unit) {
 @Composable
 fun NightModePreviewDashboardScreen() {
     PokeApp_JetpackComposeTheme {
-        DashboardContent(0, {})
+        DashboardContent(DashboardUiState(), 0, {})
     }
 }
 
@@ -116,6 +139,6 @@ fun NightModePreviewDashboardScreen() {
 @Composable
 fun LightModePreviewDashboardScreen() {
     PokeApp_JetpackComposeTheme {
-        DashboardContent(0, {})
+        DashboardContent(DashboardUiState(), 0, {})
     }
 }

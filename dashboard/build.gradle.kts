@@ -61,6 +61,17 @@ dependencies {
 
     implementation(project(":core"))
 
+    //Room
+    implementation(libs.androidx.room.runtime)
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation(libs.androidx.room.ktx)
+    // optional - Test helpers
+    testImplementation(libs.androidx.room.testing)
+    // optional - Paging 3 Integration
+    implementation(libs.androidx.room.paging)
+    // ADD THIS LINE: This is what generates UserDB_Impl
+    ksp(libs.androidx.room.compiler)
+
     //Koin
     implementation(libs.io.insert.koin.android)
     implementation(libs.io.insert.koin.androidx.compose)
@@ -73,4 +84,16 @@ dependencies {
     //Coroutine
     implementation(libs.org.jetbrains.kotlinx.coroutines.android)
     testImplementation(libs.org.jetbrains.kotlinx.coroutines.test)
+
+    // Retrofit
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging.interceptor)
+
+    // Paging 3
+    implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.paging.compose)
+
+    // Coil
+    implementation(libs.coil.compose)
 }
