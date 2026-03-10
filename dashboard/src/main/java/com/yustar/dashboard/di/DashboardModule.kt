@@ -4,10 +4,12 @@ import androidx.room.Room
 import com.yustar.dashboard.data.local.PokemonDatabase
 import com.yustar.dashboard.data.remote.network.PokemonApiService
 import com.yustar.dashboard.data.repository.PokemonRepository
+import com.yustar.dashboard.domain.GetPokemonDetailUseCase
 import com.yustar.dashboard.domain.GetPokemonUseCase
 import com.yustar.dashboard.domain.GetUserUseCase
 import com.yustar.dashboard.domain.UpdateUserProfileUseCase
 import com.yustar.dashboard.presentation.viewmodel.DashboardViewModel
+import com.yustar.dashboard.presentation.viewmodel.DetailViewModel
 import com.yustar.dashboard.presentation.viewmodel.MenuViewModel
 import com.yustar.dashboard.presentation.viewmodel.ProfileViewModel
 import okhttp3.OkHttpClient
@@ -56,9 +58,11 @@ val dashboardModule = module {
     factory { GetUserUseCase(get()) }
     factory { UpdateUserProfileUseCase(get()) }
     factory { GetPokemonUseCase(get()) }
+    factory { GetPokemonDetailUseCase(get()) }
 
     //ViewModel
     viewModel { DashboardViewModel() }
     viewModel { MenuViewModel(get()) }
     viewModel { ProfileViewModel(get(), get(), get()) }
+    viewModel { DetailViewModel(get()) }
 }

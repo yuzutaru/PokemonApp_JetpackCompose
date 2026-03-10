@@ -17,5 +17,4 @@ class MenuViewModel(getPokemonUseCase: GetPokemonUseCase): ViewModel() {
     val uiState: StateFlow<MenuUiState> = _uiState
 
     val pokemonPagingData = getPokemonUseCase().cachedIn(viewModelScope)
-
 }

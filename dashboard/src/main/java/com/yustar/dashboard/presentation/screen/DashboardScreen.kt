@@ -20,21 +20,23 @@ import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import com.yustar.core.ui.PokeApp_JetpackComposeTheme
-import com.yustar.dashboard.R
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.yustar.core.ui.Gray20
 import com.yustar.core.ui.Gray80
+import com.yustar.core.ui.PokeApp_JetpackComposeTheme
 import com.yustar.core.ui.Turquoise25
+import com.yustar.dashboard.R
+import com.yustar.dashboard.data.local.PokemonEntity
 import com.yustar.dashboard.presentation.event.DashboardUiEvent
 import com.yustar.dashboard.presentation.state.DashboardUiState
 import com.yustar.dashboard.presentation.viewmodel.DashboardViewModel
@@ -58,12 +60,20 @@ fun DashboardScreen(navController: NavHostController, viewModel: DashboardViewMo
     DashboardContent(
         uiState = uiState.value,
         selectedMenu = uiState.value.selectedTab,
-        onMenuSelected = { viewModel.onEvent(DashboardUiEvent.OnMenuSelected(it)) }
+        onMenuSelected = { viewModel.onEvent(DashboardUiEvent.OnMenuSelected(it)) },
+        onPokemonClick = { pokemon ->
+            navController.navigate("pokemon_detail/${pokemon.name}")
+        }
     )
 }
 
 @Composable
-fun DashboardContent(uiState: DashboardUiState, selectedMenu: Int, onMenuSelected: (Int) -> Unit) {
+fun DashboardContent(
+    uiState: DashboardUiState,
+    selectedMenu: Int,
+    onMenuSelected: (Int) -> Unit,
+    onPokemonClick: (PokemonEntity) -> Unit = {}
+) {
     val menus = arrayListOf(
         Menu("home", stringResource(R.string.home), Icons.Default.Home, stringResource(R.string.home)),
         Menu("profile", stringResource(R.string.profile), Icons.Default.Boy, stringResource(R.string.profile))
@@ -100,14 +110,19 @@ fun DashboardContent(uiState: DashboardUiState, selectedMenu: Int, onMenuSelecte
                                     contentDescription =  menu.contentDescription
                                 )
                             },
-                            label = { menu.label }
+                            label = { Text(menu.label) }
                         )
                     }
                 }
             }
         ) { contentPadding ->
             when (selectedMenu) {
-                0 -> { MenuScreen(contentPadding) }
+                0 -> {
+                    MenuScreen(
+                        paddingValues = contentPadding,
+                        onPokemonClick = onPokemonClick
+                    )
+                }
                 1 -> { ProfileScreen(contentPadding) }
             }
         }

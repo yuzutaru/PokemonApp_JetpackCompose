@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
 import androidx.paging.LoadState
@@ -50,6 +51,32 @@ class MenuScreenTest {
         // Note: replaceFirstChar { it.uppercase() } is used in PokemonItem
         composeTestRule.onNodeWithText("Bulbasaur").assertIsDisplayed()
         composeTestRule.onNodeWithText("Ivysaur").assertIsDisplayed()
+    }
+
+    @Test
+    fun menuContent_pokemonItemClick_triggersCallback() {
+        val pokemon = PokemonEntity("bulbasaur", "https://pokeapi.co/api/v2/pokemon/1/", 1)
+        val pokemonList = listOf(pokemon)
+        
+        val viewModel = mockk<MenuViewModel>(relaxed = true)
+        val pagingDataFlow = MutableStateFlow(PagingData.from(pokemonList))
+        val onPokemonClick: (PokemonEntity) -> Unit = mockk(relaxed = true)
+        
+        every { viewModel.pokemonPagingData } returns pagingDataFlow
+
+        composeTestRule.setContent {
+            MenuScreen(
+                paddingValues = PaddingValues(),
+                viewModel = viewModel,
+                onPokemonClick = onPokemonClick
+            )
+        }
+
+        // Click on the pokemon item
+        composeTestRule.onNodeWithText("Bulbasaur").performClick()
+
+        // Verify the callback was triggered with the correct pokemon
+        verify { onPokemonClick(pokemon) }
     }
 
     @Test

@@ -45,6 +45,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import com.yustar.core.ui.PokeApp_JetpackComposeTheme
+import com.yustar.core.ui.PokemonColors
 import com.yustar.core.ui.Turquoise25
 import com.yustar.dashboard.data.local.PokemonEntity
 import com.yustar.dashboard.presentation.viewmodel.MenuViewModel
@@ -55,19 +56,25 @@ import org.koin.androidx.compose.koinViewModel
  */
 
 @Composable
-fun MenuScreen(paddingValues: PaddingValues, viewModel: MenuViewModel = koinViewModel()) {
+fun MenuScreen(
+    paddingValues: PaddingValues,
+    viewModel: MenuViewModel = koinViewModel(),
+    onPokemonClick: (PokemonEntity) -> Unit = {}
+) {
     val pokemonPagingItems = viewModel.pokemonPagingData.collectAsLazyPagingItems()
 
     MenuContent(
         paddingValues = paddingValues,
-        pokemonPagingItems = pokemonPagingItems
+        pokemonPagingItems = pokemonPagingItems,
+        onPokemonClick = onPokemonClick
     )
 }
 
 @Composable
 fun MenuContent(
     paddingValues: PaddingValues,
-    pokemonPagingItems: LazyPagingItems<PokemonEntity>
+    pokemonPagingItems: LazyPagingItems<PokemonEntity>,
+    onPokemonClick: (PokemonEntity) -> Unit
 ) {
     val pagingItemKey = pokemonPagingItems.itemKey { it.name }
 
@@ -86,7 +93,8 @@ fun MenuContent(
         },
         refreshState = pokemonPagingItems.loadState.refresh,
         appendState = pokemonPagingItems.loadState.append,
-        onRefresh = { pokemonPagingItems.refresh() }
+        onRefresh = { pokemonPagingItems.refresh() },
+        onPokemonClick = onPokemonClick
     )
 }
 
@@ -99,7 +107,8 @@ private fun MenuContentInternal(
     itemKey: (Int) -> Any,
     refreshState: LoadState,
     appendState: LoadState,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onPokemonClick: (PokemonEntity) -> Unit
 ) {
     PullToRefreshBox(
         isRefreshing = refreshState is LoadState.Loading && itemCount > 0,
@@ -124,7 +133,10 @@ private fun MenuContentInternal(
             ) { index ->
                 val pokemon = pokemonAtIndex(index)
                 if (pokemon != null) {
-                    PokemonItem(pokemon = pokemon)
+                    PokemonItem(
+                        pokemon = pokemon,
+                        onClick = { onPokemonClick(pokemon) }
+                    )
                 }
             }
 
@@ -165,24 +177,19 @@ fun LoadingIndicator(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun PokemonItem(pokemon: PokemonEntity) {
+fun PokemonItem(pokemon: PokemonEntity, onClick: () -> Unit = {}) {
     val id = pokemon.url.split("/").filter { it.isNotEmpty() }.lastOrNull() ?: "1"
     val imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$id.png"
     
     // Background colors similar to the image
-    val colors = listOf(
-        Color(0xFFFFB6C1), // Soft Pink (Jigglypuff)
-        Color(0xFFA1E3A1), // Soft Green (Bulbasaur)
-        Color(0xFFFFE082), // Soft Yellow (Pikachu)
-        Color(0xFF81D4FA)  // Soft Blue (Polywag)
-    )
     val backgroundColor = try {
-        colors[id.toInt() % colors.size]
+        PokemonColors[id.toInt() % PokemonColors.size]
     } catch (e: Exception) {
-        colors[0]
+        PokemonColors[0]
     }
 
     Surface(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(0.85f),
@@ -258,7 +265,8 @@ fun LightModePreviewMenuContent() {
             itemKey = { pokemonList[it].name },
             refreshState = LoadState.NotLoading(false),
             appendState = LoadState.NotLoading(false),
-            onRefresh = {}
+            onRefresh = {},
+            onPokemonClick = {}
         )
     }
 }
@@ -281,7 +289,8 @@ fun NightModePreviewMenuContent() {
             itemKey = { pokemonList[it].name },
             refreshState = LoadState.NotLoading(false),
             appendState = LoadState.NotLoading(false),
-            onRefresh = {}
+            onRefresh = {},
+            onPokemonClick = {}
         )
     }
 }

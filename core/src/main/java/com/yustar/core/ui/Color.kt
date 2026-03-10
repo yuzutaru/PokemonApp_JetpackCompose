@@ -29,3 +29,10 @@ val Turquoise25 = Color(0xFF006B7F)
 
 val Red50 = Color(0xFFFA4D5E)
 val Red60 = Color(0xFFF34068)
+
+val PokemonPink = Color(0xFFFFB6C1)
+val PokemonGreen = Color(0xFFA1E3A1)
+val PokemonYellow = Color(0xFFFFE082)
+val PokemonBlue = Color(0xFF81D4FA)
+
+val PokemonColors = listOf(PokemonPink, PokemonGreen, PokemonYellow, PokemonBlue)
