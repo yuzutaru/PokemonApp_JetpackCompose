@@ -10,6 +10,8 @@ sealed class ProfileUiEvent {
     data class OnAddressChanged(val address: String) : ProfileUiEvent()
     data class OnPhoneNumberChanged(val phoneNumber: String) : ProfileUiEvent()
     object OnSaveClick : ProfileUiEvent()
+    object OnLogoutClick : ProfileUiEvent()
     object ClearError : ProfileUiEvent()
     object ResetSuccess : ProfileUiEvent()
+    object ResetLogoutState : ProfileUiEvent()
 }

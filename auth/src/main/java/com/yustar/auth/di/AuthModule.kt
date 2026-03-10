@@ -7,6 +7,7 @@ import com.yustar.core.data.local.UserDB
 import com.yustar.core.data.repository.UserRepository
 import com.yustar.core.data.repository.UserRepositoryImpl
 import com.yustar.auth.domain.LoginUserUseCase
+import com.yustar.auth.domain.LogoutUseCase
 import com.yustar.auth.domain.RegisterUserUseCase
 import com.yustar.auth.presentation.viewmodel.LoginViewModel
 import com.yustar.auth.presentation.viewmodel.RegisterViewModel
@@ -47,6 +48,7 @@ val authModule = module {
     // UseCases
     factory { LoginUserUseCase(get(), get()) }
     factory { RegisterUserUseCase(get()) }
+    factory { LogoutUseCase(get()) }
 
     //ViewModel
     viewModel { LoginViewModel(get()) }

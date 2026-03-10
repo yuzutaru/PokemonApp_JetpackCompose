@@ -63,6 +63,13 @@ fun DashboardScreen(navController: NavHostController, viewModel: DashboardViewMo
         onMenuSelected = { viewModel.onEvent(DashboardUiEvent.OnMenuSelected(it)) },
         onPokemonClick = { pokemon ->
             navController.navigate("pokemon_detail/${pokemon.name}")
+        },
+        onLogout = {
+            navController.navigate("login_route") {
+                popUpTo("menu_route") {
+                    inclusive = true
+                }
+            }
         }
     )
 }
@@ -72,7 +79,8 @@ fun DashboardContent(
     uiState: DashboardUiState,
     selectedMenu: Int,
     onMenuSelected: (Int) -> Unit,
-    onPokemonClick: (PokemonEntity) -> Unit = {}
+    onPokemonClick: (PokemonEntity) -> Unit = {},
+    onLogout: () -> Unit = {}
 ) {
     val menus = arrayListOf(
         Menu("home", stringResource(R.string.home), Icons.Default.Home, stringResource(R.string.home)),
@@ -123,7 +131,12 @@ fun DashboardContent(
                         onPokemonClick = onPokemonClick
                     )
                 }
-                1 -> { ProfileScreen(contentPadding) }
+                1 -> {
+                    ProfileScreen(
+                        paddingValues = contentPadding,
+                        onLogout = onLogout
+                    )
+                }
             }
         }
 

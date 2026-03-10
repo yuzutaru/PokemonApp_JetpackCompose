@@ -272,4 +272,43 @@ class ProfileViewModelTest {
         assertEquals("Session expired", viewModel.uiState.value.error)
         assertFalse(viewModel.uiState.value.isLoading)
     }
+
+    @Test
+    fun `on LogoutClick logs out successfully`() = runTest {
+        // Given
+        every { sessionManager.loggedUser } returns flowOf(testUser.username)
+        coEvery { getUserUseCase(testUser.username) } returns testUser
+        createViewModel()
+        advanceUntilIdle()
+
+        coEvery { sessionManager.logout() } returns Unit
+
+        // When
+        viewModel.onEvent(ProfileUiEvent.OnLogoutClick)
+        advanceUntilIdle()
+
+        // Then
+        coVerify { sessionManager.logout() }
+        assertTrue(viewModel.uiState.value.isLoggedOut)
+    }
+
+    @Test
+    fun `on ResetLogoutState resets logout state`() = runTest {
+        // Given
+        every { sessionManager.loggedUser } returns flowOf(testUser.username)
+        coEvery { getUserUseCase(testUser.username) } returns testUser
+        createViewModel()
+        advanceUntilIdle()
+
+        coEvery { sessionManager.logout() } returns Unit
+        viewModel.onEvent(ProfileUiEvent.OnLogoutClick)
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.isLoggedOut)
+
+        // When
+        viewModel.onEvent(ProfileUiEvent.ResetLogoutState)
+
+        // Then
+        assertFalse(viewModel.uiState.value.isLoggedOut)
+    }
 }

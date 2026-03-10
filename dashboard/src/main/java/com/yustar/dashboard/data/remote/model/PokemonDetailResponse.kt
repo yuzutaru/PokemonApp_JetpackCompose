@@ -9,20 +9,20 @@ data class PokemonDetailResponse(
     @SerializedName("weight") val weight: Int,
     @SerializedName("sprites") val sprites: SpritesDto,
     @SerializedName("types") val types: List<TypeSlotDto>,
-    @SerializedName("abilities") val abilities: List<AbilitySlotDto>
+    @SerializedName("abilities") val abilities: List<AbilitySlotDto> = emptyList()
 )
 
 data class SpritesDto(
-    @SerializedName("front_default") val frontDefault: String?,
-    @SerializedName("other") val other: OtherSpritesDto?
+    @SerializedName("front_default") val frontDefault: String? = null,
+    @SerializedName("other") val other: OtherSpritesDto? = null
 )
 
 data class OtherSpritesDto(
-    @SerializedName("official-artwork") val officialArtwork: OfficialArtworkDto?
+    @SerializedName("official-artwork") val officialArtwork: OfficialArtworkDto? = null
 )
 
 data class OfficialArtworkDto(
-    @SerializedName("front_default") val frontDefault: String?
+    @SerializedName("front_default") val frontDefault: String? = null
 )
 
 data class TypeSlotDto(

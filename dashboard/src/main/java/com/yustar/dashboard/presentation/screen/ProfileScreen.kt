@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -53,6 +55,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun ProfileScreen(
     paddingValues: PaddingValues,
+    onLogout: () -> Unit = {},
     viewModel: ProfileViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -72,6 +75,12 @@ fun ProfileScreen(
         }
     }
 
+    LaunchedEffect(uiState.isLoggedOut) {
+        if (uiState.isLoggedOut) {
+            onLogout()
+        }
+    }
+
     ProfileContent(
         paddingValues = paddingValues,
         uiState = uiState,
@@ -79,7 +88,8 @@ fun ProfileScreen(
         onLastNameChanged = { viewModel.onEvent(ProfileUiEvent.OnLastNameChanged(it)) },
         onAddressChanged = { viewModel.onEvent(ProfileUiEvent.OnAddressChanged(it)) },
         onPhoneNumberChanged = { viewModel.onEvent(ProfileUiEvent.OnPhoneNumberChanged(it)) },
-        onSaveClick = { viewModel.onEvent(ProfileUiEvent.OnSaveClick) }
+        onSaveClick = { viewModel.onEvent(ProfileUiEvent.OnSaveClick) },
+        onLogoutClick = { viewModel.onEvent(ProfileUiEvent.OnLogoutClick) }
     )
 }
 
@@ -91,7 +101,8 @@ fun ProfileContent(
     onLastNameChanged: (String) -> Unit = {},
     onAddressChanged: (String) -> Unit = {},
     onPhoneNumberChanged: (String) -> Unit = {},
-    onSaveClick: () -> Unit = {}
+    onSaveClick: () -> Unit = {},
+    onLogoutClick: () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -187,6 +198,20 @@ fun ProfileContent(
                             }
                         }
                     }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onLogoutClick() }
+                        .padding(8.dp),
+                    text = stringResource(R.string.logout),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Red60,
+                    fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))

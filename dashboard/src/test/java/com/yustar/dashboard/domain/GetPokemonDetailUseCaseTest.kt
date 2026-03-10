@@ -10,6 +10,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 
@@ -49,16 +50,19 @@ class GetPokemonDetailUseCaseTest {
         coVerify { repository.getPokemonDetail(pokemonName) }
     }
 
-    @Test(expected = Exception::class)
+    @Test
     fun `when repository throws exception, propagate it`() = runTest {
         // Given
         val pokemonName = "unknown"
-        coEvery { repository.getPokemonDetail(pokemonName) } throws Exception("Not Found")
+        val errorMessage = "Not Found"
+        coEvery { repository.getPokemonDetail(pokemonName) } throws Exception(errorMessage)
 
-        // When
-        getPokemonDetailUseCase(pokemonName)
-
-        // Then
-        // Exception is expected
+        // When & Then
+        val exception = assertThrows(Exception::class.java) {
+            runTest {
+                getPokemonDetailUseCase(pokemonName)
+            }
+        }
+        assertEquals(errorMessage, exception.message)
     }
 }

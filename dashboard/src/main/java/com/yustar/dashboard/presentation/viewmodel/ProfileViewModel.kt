@@ -76,12 +76,20 @@ class ProfileViewModel(
                 saveProfile()
             }
 
+            is ProfileUiEvent.OnLogoutClick -> {
+                logout()
+            }
+
             is ProfileUiEvent.ClearError -> {
                 _uiState.update { it.copy(error = "") }
             }
 
             is ProfileUiEvent.ResetSuccess -> {
                 _uiState.update { it.copy(isSuccess = false) }
+            }
+
+            is ProfileUiEvent.ResetLogoutState -> {
+                _uiState.update { it.copy(isLoggedOut = false) }
             }
         }
     }
@@ -107,6 +115,13 @@ class ProfileViewModel(
             } else {
                 _uiState.update { it.copy(isLoading = false, error = "Session expired") }
             }
+        }
+    }
+
+    private fun logout() {
+        viewModelScope.launch {
+            sessionManager.logout()
+            _uiState.update { it.copy(isLoggedOut = true) }
         }
     }
 }
